@@ -69,7 +69,27 @@ median(na.omit(data$steps))
 ### Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 
+```r
+d <- aggregate(steps ~ interval, data, mean)
+plot(d$interval, 
+     d$steps, 
+     type="l",
+     xlab="5-Minute Interval",
+     ylab="Average Number of Steps")
+```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+
+```r
+d[d$steps==max(d$steps),]$interval
+```
+
+```
+## [1] 835
+```
 
 ## Imputing missing values
 
