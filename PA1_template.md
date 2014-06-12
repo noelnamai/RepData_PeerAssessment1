@@ -5,10 +5,10 @@
 
 
 ```r
-data <- read.csv(unz("activity.zip", "activity.csv"), 
-                     sep=",", 
-                     header=TRUE,
-                     stringsAsFactors=FALSE)
+data <- read.csv(unz("activity.zip", "activity.csv"),
+                 sep=",",
+                 header=TRUE,
+                 stringsAsFactors=FALSE)
 head(data, 10)
 ```
 
@@ -28,9 +28,46 @@ head(data, 10)
 
 ## What is mean total number of steps taken per day?
 
+### Make a histogram of the total number of steps taken each day.
 
+
+```r
+library(ggplot2)
+qplot(date, 
+      data=data, 
+      weight=steps, 
+      geom="histogram", 
+      xlab="Date", 
+      ylab="Total Number of Steps") + 
+    geom_histogram(colour="black", fill="red") + 
+    theme(axis.text.x=element_text(angle=-90, hjust=0))
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+### Calculate and report the mean and median total number of steps taken per day.
+
+
+```r
+mean(na.omit(data$steps))
+```
+
+```
+## [1] 37.38
+```
+
+```r
+median(na.omit(data$steps))
+```
+
+```
+## [1] 0
+```
 
 ## What is the average daily activity pattern?
+
+### Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
 
 
 
