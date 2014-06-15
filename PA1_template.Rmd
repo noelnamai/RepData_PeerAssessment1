@@ -76,8 +76,8 @@ cleandata <- function(data){
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```{r}
-newdataset <- cleandata(data)
-head(newdataset)
+newdata <- cleandata(data)
+head(newdata)
 ```
 
 ### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
@@ -85,7 +85,7 @@ head(newdataset)
 ```{r}
 library(ggplot2)
 qplot(date, 
-      data=newdataset, 
+      data=newdata, 
       weight=steps, 
       geom="histogram", 
       xlab="Date", 
@@ -93,14 +93,38 @@ qplot(date,
     geom_histogram(colour="black", fill="red") + 
     theme(axis.text.x=element_text(angle=-90, hjust=0))
 
-mean(newdataset$steps)
-median(newdataset$steps)
+mean(newdata$steps)
+median(newdata$steps)
 ```
 
 ### Do these values differ from the estimates from the first part of the assignment? 
 
+The mean does not differ while the median differs from the first part of the assignment.
+
 ### What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
+Replacing the missing values with the interval mean skews the data towards the mean.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+### Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+```{r}
+library(chron)
+newdata$whichday <- as.factor(ifelse(is.weekend(as.Date(newdata$date)), "Weekend", "Weekday"))
+head(newdata)
+```
+
+### Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+
+```{r}
+library(lattice)
+g <- aggregate(newdata$steps, list(newdata$whichday, newdata$interval), mean)
+names(g) <- c("whichday", "interval", "steps")
+xyplot(steps ~ interval | whichday, 
+       type="l", 
+       data=g, 
+       layout=c(1,2), 
+       xlab="Interval",
+       ylab="Number of Steps")
+```

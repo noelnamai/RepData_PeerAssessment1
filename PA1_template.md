@@ -121,8 +121,8 @@ cleandata <- function(data){
 
 
 ```r
-newdataset <- cleandata(data)
-head(newdataset)
+newdata <- cleandata(data)
+head(newdata)
 ```
 
 ```
@@ -141,7 +141,7 @@ head(newdataset)
 ```r
 library(ggplot2)
 qplot(date, 
-      data=newdataset, 
+      data=newdata, 
       weight=steps, 
       geom="histogram", 
       xlab="Date", 
@@ -153,7 +153,7 @@ qplot(date,
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 ```r
-mean(newdataset$steps)
+mean(newdata$steps)
 ```
 
 ```
@@ -161,7 +161,7 @@ mean(newdataset$steps)
 ```
 
 ```r
-median(newdataset$steps)
+median(newdata$steps)
 ```
 
 ```
@@ -170,8 +170,46 @@ median(newdataset$steps)
 
 ### Do these values differ from the estimates from the first part of the assignment? 
 
+The mean does not differ while the median differs from the first part of the assignment.
+
 ### What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
+Replacing the missing values with the interval mean skews the data towards the mean.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+### Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+
+```r
+library(chron)
+newdata$whichday <- as.factor(ifelse(is.weekend(as.Date(newdata$date)), "Weekend", "Weekday"))
+head(newdata)
+```
+
+```
+##     steps       date interval whichday
+## 1 1.71698 2012-10-01        0  Weekday
+## 2 0.33962 2012-10-01        5  Weekday
+## 3 0.13208 2012-10-01       10  Weekday
+## 4 0.15094 2012-10-01       15  Weekday
+## 5 0.07547 2012-10-01       20  Weekday
+## 6 2.09434 2012-10-01       25  Weekday
+```
+
+### Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+
+
+```r
+library(lattice)
+g <- aggregate(newdata$steps, list(newdata$whichday, newdata$interval), mean)
+names(g) <- c("whichday", "interval", "steps")
+xyplot(steps ~ interval | whichday, 
+       type="l", 
+       data=g, 
+       layout=c(1,2), 
+       xlab="Interval",
+       ylab="Number of Steps")
+```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
