@@ -93,6 +93,85 @@ d[d$steps==max(d$steps),]$interval
 
 ## Imputing missing values
 
+### Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+
+```r
+sum(is.na(data))
+```
+
+```
+## [1] 2304
+```
+
+### Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+
+```r
+cleandata <- function(data){
+    aggdata <- aggregate(steps ~ interval, data, mean)
+    for(i in data[is.na(data$steps),]$interval){
+        data[data$interval == i,]$steps <- aggdata[aggdata$interval == i,]$steps
+    }
+    data
+}
+```
+
+### Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+
+```r
+newdataset <- cleandata(data)
+head(newdataset)
+```
+
+```
+##     steps       date interval
+## 1 1.71698 2012-10-01        0
+## 2 0.33962 2012-10-01        5
+## 3 0.13208 2012-10-01       10
+## 4 0.15094 2012-10-01       15
+## 5 0.07547 2012-10-01       20
+## 6 2.09434 2012-10-01       25
+```
+
+### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
+
+
+```r
+library(ggplot2)
+qplot(date, 
+      data=newdataset, 
+      weight=steps, 
+      geom="histogram", 
+      xlab="Date", 
+      ylab="Total Number of Steps") + 
+    geom_histogram(colour="black", fill="red") + 
+    theme(axis.text.x=element_text(angle=-90, hjust=0))
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+
+```r
+mean(newdataset$steps)
+```
+
+```
+## [1] 37.38
+```
+
+```r
+median(newdataset$steps)
+```
+
+```
+## [1] 34.11
+```
+
+### Do these values differ from the estimates from the first part of the assignment? 
+
+### What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
